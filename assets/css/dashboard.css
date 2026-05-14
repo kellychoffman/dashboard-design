@@ -1,12 +1,26 @@
 /**
  * Dashboard Design — custom styles for /wp-admin/index.php
- *
- * Add your CSS tweaks below. This file only loads on the dashboard page.
  */
 
-/* Example: tighten up the welcome panel
-.welcome-panel {
-	border-radius: 12px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.postbox {
+	border: none;
+	border-radius: 8px;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 0 12px rgba(0, 0, 0, 0.04);
 }
-*/
+
+.postbox .postbox-header {
+	border: none;
+	padding: 4px 12px;
+}
+
+.postbox .postbox-header .hndle {
+	padding: 12px 4px;
+}
+
+.postbox .inside {
+	padding: 0 16px 16px;
+}
+
+#dashboard_quick_press .inside {
+	padding-bottom: 4px;
+}
