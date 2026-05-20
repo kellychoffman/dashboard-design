@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DASHBOARD_DESIGN_VERSION = '0.1.7';
+const DASHBOARD_DESIGN_VERSION = '0.1.20';
 
 add_action( 'admin_enqueue_scripts', 'dashboard_design_enqueue_assets' );
 
@@ -31,7 +31,7 @@ function dashboard_design_enqueue_assets( $hook ) {
 	wp_enqueue_script(
 		'dashboard-design',
 		plugins_url( 'assets/js/dashboard.js', __FILE__ ),
-		array(),
+		array( 'jquery', 'postbox' ),
 		DASHBOARD_DESIGN_VERSION,
 		true
 	);
