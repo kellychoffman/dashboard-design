@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DASHBOARD_DESIGN_VERSION = '0.1.20';
+const DASHBOARD_DESIGN_VERSION = '0.1.24';
 
 add_action( 'admin_enqueue_scripts', 'dashboard_design_enqueue_assets' );
 

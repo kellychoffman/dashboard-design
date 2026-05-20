@@ -2,7 +2,8 @@
  * Dashboard Design — custom styles for /wp-admin/index.php
  */
 
-.postbox {
+.postbox,
+.welcome-panel {
 	border: none;
 	border-radius: 8px;
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 0 12px rgba(0, 0, 0, 0.04);
@@ -35,9 +36,12 @@
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 0 12px rgba(0, 0, 0, 0.04);
 }
 
-#screen-options-wrap,
-#contextual-help-wrap {
+#screen-options-wrap {
 	padding: 16px;
+}
+
+#contextual-help-wrap {
+	padding: 16px 0;
 }
 
 #screen-meta-links .show-settings {
