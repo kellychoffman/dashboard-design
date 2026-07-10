@@ -1,6 +1,6 @@
 # Dashboard Design
 
-A tiny WordPress plugin for tweaking the look of the WP admin dashboard (`/wp-admin/index.php`).
+A tiny WordPress plugin for updating the design of the WP admin dashboard (`/wp-admin/index.php`).
 
 ## What it does
 
