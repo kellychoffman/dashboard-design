@@ -2,7 +2,8 @@
  * Dashboard Design — custom JS for /wp-admin/index.php
  *
  * 1. Replaces postbox snap-toggle with the same slide WP uses for Screen Options / Help.
- * 2. Mode switcher: floating pill that picks between three looks —
+ * 2. FLIP-animates the move up/down reorder so widgets glide to their new spot.
+ * 3. Mode switcher: floating pill that picks between three looks —
  *    Current (stock WP), Elevation (soft shadows), Flat (WPDS cards) — by
  *    enabling/disabling the plugin stylesheets. Persisted in localStorage.
  */
@@ -77,6 +78,126 @@
 		// and a second .postboxes binding would double-toggle in Before mode
 		$h.off( 'click.postboxes' );
 		$h.on( 'click.postboxes', postboxes.handle_click );
+	}
+
+	// ── Reorder (move up/down) animation ──────────────────────────────────────
+	// WP core moves the .postbox in the DOM instantly when a move up/down button
+	// is clicked. We FLIP it: a capture-phase listener records every widget's
+	// position *before* WP's click handler runs, then — after WP has moved the
+	// DOM but before the browser paints — each displaced widget is pinned back to
+	// its old spot and released, sliding to its new position with the same 200ms
+	// feel as the expand/collapse slide.
+
+	var FLIP_MS = 200;
+
+	function prefersReducedMotion() {
+		return (
+			window.matchMedia &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
+		);
+	}
+
+	function columnBoxes( container ) {
+		return Array.prototype.filter.call( container.children, function ( el ) {
+			return el.classList && el.classList.contains( 'postbox' );
+		} );
+	}
+
+	function flipReorder( button ) {
+		var container = button.closest( '.meta-box-sortables' );
+		if ( ! container ) {
+			return;
+		}
+
+		var boxes   = columnBoxes( container );
+		var clicked = button.closest( '.postbox' );
+
+		// Finish any in-flight FLIP first, so we measure true layout positions
+		// (getBoundingClientRect reports the transformed rect mid-animation).
+		boxes.forEach( function ( el ) {
+			el.style.transition = '';
+			el.style.transform  = '';
+		} );
+
+		var first = boxes.map( function ( el ) {
+			return el.getBoundingClientRect();
+		} );
+
+		// WP's click handler runs next (synchronously, after this capture-phase
+		// listener) and moves the DOM. The rAF fires before the next paint.
+		window.requestAnimationFrame( function () {
+			var moved = [];
+
+			boxes.forEach( function ( el, i ) {
+				var last = el.getBoundingClientRect();
+				var dx   = first[ i ].left - last.left;
+				var dy   = first[ i ].top - last.top;
+
+				if ( ! dx && ! dy ) {
+					return;
+				}
+
+				// Invert: pin the widget to its old spot with no transition.
+				el.style.transition = 'none';
+				el.style.transform  = 'translate(' + dx + 'px,' + dy + 'px)';
+				moved.push( el );
+			} );
+
+			if ( ! moved.length ) {
+				return;
+			}
+
+			// Raise the widget you actually moved so it glides over the other
+			// during the crossover instead of under it.
+			if ( clicked ) {
+				clicked.style.position = 'relative';
+				clicked.style.zIndex   = '1';
+			}
+
+			// Force a reflow so the inverted transforms take hold as the start
+			// state before we transition back to zero.
+			void container.offsetHeight;
+
+			window.requestAnimationFrame( function () {
+				moved.forEach( function ( el ) {
+					el.style.transition = 'transform ' + FLIP_MS + 'ms ease';
+					el.style.transform  = '';
+
+					var done = function ( event ) {
+						if ( event.propertyName !== 'transform' ) {
+							return;
+						}
+						el.style.transition = '';
+						if ( el === clicked ) {
+							el.style.position = '';
+							el.style.zIndex   = '';
+						}
+						el.removeEventListener( 'transitionend', done );
+					};
+					el.addEventListener( 'transitionend', done );
+				} );
+			} );
+		} );
+	}
+
+	function onReorderCapture( event ) {
+		if ( ! designOn || prefersReducedMotion() ) {
+			return;
+		}
+
+		var target = event.target;
+		if ( ! target || ! target.closest ) {
+			return;
+		}
+
+		var button = target.closest(
+			'.handle-order-higher, .handle-order-lower'
+		);
+		if ( ! button || button.disabled ) {
+			return;
+		}
+
+		flipReorder( button );
 	}
 
 	// ── Mode switcher ─────────────────────────────────────────────────────────
@@ -180,6 +301,9 @@
 
 	$( window ).on( 'load', function () {
 		var mode = readMode();
+
+		// Capture phase so this runs before WP's own click handler moves the DOM.
+		document.addEventListener( 'click', onReorderCapture, true );
 
 		initToggle( mode );
 
