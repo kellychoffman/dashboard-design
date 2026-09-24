@@ -256,3 +256,81 @@
 	-webkit-mask-image: var(--dd-icon-comment);
 	mask-image: var(--dd-icon-comment);
 }
+
+/* ── Activity widget ─────────────────────────────────────────────────────
+   WP core zebra-stripes Recently Published (#f6f7f7 on odd rows) and fills
+   every comment item with the same gray. Drop both fills and separate items
+   with a hairline instead. Core uses ID selectors here, so these have to
+   out-specify them. */
+
+#dashboard_activity #published-posts li:nth-child(2n+1),
+#dashboard_activity #activity-widget #the-comment-list .comment-item {
+	background: none;
+}
+
+/* Keep core's 12px horizontal padding: it is what lines the rows up with the
+   section heading above them. The separator below is drawn on the border box,
+   so it still spans the full content width regardless. Only the vertical
+   rhythm changes, trading the old 6px bottom margin for even padding so the
+   rules sit midway between rows. */
+#dashboard_activity #published-posts li {
+	margin: 0;
+	padding: 8px 12px;
+}
+
+/* Between consecutive items only, so neither list gets a leading or
+   trailing rule of its own. */
+#dashboard_activity #published-posts li + li,
+#dashboard_activity #the-comment-list .comment-item + .comment-item {
+	border-top: 1px solid #f0f0f1;
+}
+
+/* Activity widget: approve comment action */
+#dashboard_activity .comment-meta span.approve::before {
+	content: "";
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	margin: 0 2px 0 5px;
+	vertical-align: middle;
+	position: relative;
+	top: -1px;
+	background-color: currentColor;
+	-webkit-mask: var(--dd-icon-check) no-repeat center / 20px;
+	mask: var(--dd-icon-check) no-repeat center / 20px;
+}
+
+/* ── WordPress Events and News widget ────────────────────────────────────
+   Same treatment as Activity. Core tints the whole events list with a
+   translucent blue band (on the <ul>, not per row) and draws a rule above
+   every row, including the first, where it doubles up with the section
+   divider already above it. Drop the fill, drop that leading rule, and use
+   the same hairline between consecutive items. */
+
+#dashboard_primary #community-events .community-events-results {
+	background: none;
+	/* Keep a divider here (recoloured to match) so the events list still
+	   reads as separate from the news list below it. */
+	border-bottom: 1px solid #f0f0f1;
+}
+
+#dashboard_primary #community-events .community-events-results li.event {
+	border-top: none;
+}
+
+#dashboard_primary #community-events .community-events-results li.event + li.event,
+#dashboard_primary .wordpress-news .rss-widget li + li {
+	border-top: 1px solid #f0f0f1;
+}
+
+/* Core packs the news links at 4px; even them out to the same 8px rhythm the
+   other lists use so the hairlines sit midway between rows. */
+#dashboard_primary .wordpress-news .rss-widget li {
+	padding: 8px 0;
+}
+
+/* The news list is two sibling .rss-widget blocks; without this the junction
+   between them is the one item gap with no rule through it. */
+#dashboard_primary .wordpress-news .rss-widget + .rss-widget li:first-child {
+	border-top: 1px solid #f0f0f1;
+}
