@@ -1,0 +1,70 @@
+/**
+ * Dashboard Design — shared base styles for /wp-admin/index.php
+ *
+ * Spacing, alignment, and Gutenberg icon replacements shared by every design
+ * mode. The surface treatments live in elevation.css and flat.css; exactly one
+ * of those is enabled alongside this file (none in "Current" mode).
+ */
+
+/* WP core puts a 1px #c3c4c7 border on the column container (the white content
+   grid), which reads as a border around the panel. Remove it so the welcome
+   panel matches the borderless postboxes. */
+.welcome-panel .welcome-panel-column-container {
+	border: none;
+}
+
+.postbox .postbox-header {
+	border: none;
+	padding: 4px 18px;
+}
+
+/* WP core's #dashboard-widgets .postbox-header .hndle wins on specificity,
+   so scope under the same ID. Zero horizontal padding so the title's inset is
+   set solely by .postbox-header's padding, which keeps it flush with .inside
+   below; any padding here would indent the title past the content. */
+#dashboard-widgets .postbox-header .hndle {
+	padding: 12px 0;
+}
+
+.postbox .inside {
+	padding: 0 18px 18px;
+}
+
+/* WP core zeroes/tightens the content padding on these widgets with ID
+   selectors; restore the shared 18px inset so their content lines up under
+   the header like every other widget. */
+#dashboard_activity .inside,
+#dashboard_quick_press .inside,
+#dashboard_primary .inside {
+	padding-left: 18px;
+	padding-right: 18px;
+}
+
+/* The form is the last thing in this widget (core zeroes the bottom padding
+   with an ID selector), so restore the shared 18px inset for breathing room
+   under the Save Draft button. */
+#dashboard_quick_press .inside {
+	padding-bottom: 18px;
+}
+
+/* WP core gives the Quick Draft form a 12px margin; drop it so the form sits
+   flush inside the .inside padding like the other widgets' content. */
+#dashboard_quick_press form {
+	margin: 0;
+}
+
+#dashboard_php_nag .inside > p:first-child {
+	margin-top: 0;
+}
+
+#screen-options-wrap {
+	padding: 16px;
+}
+
+#contextual-help-wrap {
+	padding: 16px 0;
+}
+
+#screen-meta-links .show-settings {
+	padding: 4px 8px 4px 16px;
+}

@@ -1,5 +1,8 @@
 /**
- * Dashboard Design — custom styles for /wp-admin/index.php
+ * Dashboard Design — "Elevation" mode.
+ *
+ * Soft-shadow surface treatment: borderless widgets lifted off the page with
+ * layered shadows and 8px rounding. Loads on top of base.css.
  */
 
 .postbox,
@@ -9,45 +12,15 @@
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 0 12px rgba(0, 0, 0, 0.04);
 }
 
-.postbox .postbox-header {
-	border: none;
-	padding: 4px 12px;
-}
-
-.postbox .postbox-header .hndle {
-	padding: 12px 4px;
-}
-
-.postbox .inside {
-	padding: 0 16px 16px;
-}
-
-#dashboard_quick_press .inside {
-	padding-bottom: 4px;
-}
-
-#dashboard_php_nag .inside > p:first-child {
-	margin-top: 0;
-}
-
 #screen-meta {
 	border: none;
 	border-radius: 8px 8px 0 8px;
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 0 12px rgba(0, 0, 0, 0.04);
 }
 
-#screen-options-wrap {
-	padding: 16px;
-}
-
-#contextual-help-wrap {
-	padding: 16px 0;
-}
-
 #screen-meta-links .show-settings {
 	border: none;
 	border-radius: 0 0 8px 8px;
-	padding: 4px 8px 4px 16px;
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 0 6px rgba(0, 0, 0, 0.03);
 }
 
@@ -55,6 +28,8 @@
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 0 8px rgba(0, 0, 0, 0.05);
 }
 
+/* The active tab and the open panel read as one continuous shape: side
+   shadows only (the panel's opaque background covers the bottom edge). */
 #screen-meta-links .screen-meta-active {
 	box-shadow:
 		0 1px 0 rgba(0, 0, 0, 0.03),

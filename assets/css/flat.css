@@ -1,0 +1,217 @@
+/**
+ * Dashboard Design — "Flat" mode.
+ *
+ * Borrows the Site Editor's shell language (wp-admin/site-editor.php), where
+ * the admin bar, admin menu, and canvas form one continuous #1e1e1e field and
+ * white panels float on it with an 8px radius and a layered soft shadow.
+ * WP 7.0 already paints #adminmenu and #wpadminbar #1e1e1e, so darkening the
+ * page canvas is all it takes for the three to become one surface.
+ *
+ * Values measured from the running Site Editor rather than guessed:
+ *   - shell/canvas        #1e1e1e
+ *   - floating panel      8px radius, 16px margin, 4-layer shadow (below)
+ *   - controls            2px radius (dominant by far — 41 uses vs 5 of 4px)
+ *   - primary button      #3858e9 bg, 2px radius
+ *   - section label       11px / weight 499
+ *   - body text           13px / 1.4, secondary #757575
+ *
+ * Component styling still follows the recommended WordPress Design System
+ * components (Card + Button from @wordpress/ui) — the two agree, since the
+ * Site Editor is built from them. Every value is written as var(--wpds-*)
+ * with a hardcoded fallback copied from @wordpress/theme's default tokens,
+ * so this picks up real theming for free if wp-admin ever ships them.
+ */
+
+:root {
+	/* Site Editor shell */
+	--dd-flat-canvas: #1e1e1e;
+	--dd-flat-on-canvas: #e0e0e0;
+	--dd-flat-on-canvas-weak: #ccc;
+
+	/* The Site Editor's floating-panel shadow, verbatim */
+	--dd-flat-panel-shadow:
+		0 1px 1px rgba(0, 0, 0, 0.03),
+		0 1px 2px rgba(0, 0, 0, 0.02),
+		0 3px 3px rgba(0, 0, 0, 0.02),
+		0 4px 4px rgba(0, 0, 0, 0.01);
+}
+
+/* ── Shell ───────────────────────────────────────────────────────────────
+   Darken the canvas so it runs continuously into the admin menu and bar. */
+
+body {
+	background: var(--dd-flat-canvas, #1e1e1e);
+}
+
+/* Page furniture that now sits on the dark canvas */
+.wrap h1,
+#wpbody-content .wrap > h1 {
+	color: var(--dd-flat-on-canvas, #e0e0e0);
+}
+
+#wpfooter {
+	color: var(--dd-flat-on-canvas-weak, #ccc);
+}
+
+#wpfooter a {
+	color: var(--dd-flat-on-canvas, #e0e0e0);
+}
+
+#wpfooter a:hover {
+	color: #fff;
+}
+
+/* ── Floating panels ─────────────────────────────────────────────────────
+   Card.Root, dressed as a Site Editor canvas panel: no border, 8px radius,
+   the layered shadow. ID-scoped because WP core styles
+   #dashboard-widgets .postbox with an ID selector that outranks .postbox. */
+
+#dashboard-widgets .postbox,
+#welcome-panel {
+	background: var(--wpds-color-background-surface-neutral-strong, #fff);
+	border: none;
+	border-radius: var(--wpds-border-radius-lg, 8px);
+	box-shadow: var(--dd-flat-panel-shadow);
+	color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+}
+
+/* Card has no header divider: the header/content boundary is spacing only. */
+#dashboard-widgets .postbox .postbox-header {
+	border-bottom: none;
+	padding: 4px 24px; /* the Card's 24px inline inset */
+}
+
+/* Site Editor panel titles: 20px/499. Widget titles are smaller but take the
+   same medium weight. */
+#dashboard-widgets .postbox-header .hndle {
+	font-weight: var(--wpds-typography-font-weight-medium, 500);
+}
+
+/* Card.Content: 24px (padding-2xl) inline/bottom inset. The 12px top plus the
+   title's 12px bottom padding approximates the Card's 24px header-content
+   gap (gap-xl) at dashboard density. */
+.postbox .inside {
+	padding: var(--wpds-dimension-padding-md, 12px) var(--wpds-dimension-padding-2xl, 24px) var(--wpds-dimension-padding-2xl, 24px);
+}
+
+/* Re-assert the inline inset on the widgets WP core tightens with ID
+   selectors (mirrors the equivalent block in base.css, at Card width). */
+#dashboard_activity .inside,
+#dashboard_quick_press .inside,
+#dashboard_primary .inside {
+	padding-left: var(--wpds-dimension-padding-2xl, 24px);
+	padding-right: var(--wpds-dimension-padding-2xl, 24px);
+}
+
+/* Quick Draft's form ends the widget; match the Card's bottom inset. */
+#dashboard_quick_press .inside {
+	padding-bottom: var(--wpds-dimension-padding-2xl, 24px);
+}
+
+/* Notices float like panels too, so they don't read as torn paper on dark. */
+#wpbody-content .notice,
+#wpbody-content div.updated,
+#wpbody-content div.error {
+	border-radius: var(--wpds-border-radius-lg, 8px);
+	box-shadow: var(--dd-flat-panel-shadow);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────
+   Button (@wordpress/ui) — and the Site Editor's own controls agree: 2px
+   radius, #3858e9 primary. 40px tall (size-lg) matches WP core's own 40px,
+   so no height override is needed. */
+
+#dashboard-widgets .button,
+#screen-meta .button {
+	min-height: 40px;
+	padding: var(--wpds-dimension-padding-xs, 4px) var(--wpds-dimension-padding-md, 12px);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: var(--wpds-border-radius-sm, 2px);
+	font-size: var(--wpds-typography-font-size-md, 13px);
+	font-weight: var(--wpds-typography-font-weight-medium, 500);
+	line-height: var(--wpds-typography-line-height-sm, 20px);
+	transition: color 0.1s ease-out;
+}
+
+#dashboard-widgets a.button,
+#screen-meta a.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--wpds-dimension-gap-sm, 8px);
+}
+
+/* tone="brand" variant="solid" — the border matches the background */
+#dashboard-widgets .button-primary,
+#screen-meta .button-primary {
+	background: var(--wpds-color-background-interactive-brand-strong, #3858e9);
+	border-color: var(--wpds-color-background-interactive-brand-strong, #3858e9);
+	color: var(--wpds-color-foreground-interactive-brand-strong, #eff0f2);
+	box-shadow: none;
+	text-shadow: none;
+}
+
+#dashboard-widgets .button-primary:hover,
+#dashboard-widgets .button-primary:active,
+#dashboard-widgets .button-primary:focus,
+#screen-meta .button-primary:hover,
+#screen-meta .button-primary:active,
+#screen-meta .button-primary:focus {
+	background: var(--wpds-color-background-interactive-brand-strong-active, #2e49d9);
+	border-color: var(--wpds-color-background-interactive-brand-strong-active, #2e49d9);
+	color: var(--wpds-color-foreground-interactive-brand-strong-active, #eff0f2);
+	box-shadow: none;
+}
+
+/* tone="brand" variant="outline" */
+#dashboard-widgets .button:not(.button-primary),
+#screen-meta .button:not(.button-primary) {
+	background: var(--wpds-color-background-interactive-brand-weak, transparent);
+	border-color: var(--wpds-color-stroke-interactive-brand, #3858e9);
+	color: var(--wpds-color-foreground-interactive-brand, #3858e9);
+	box-shadow: none;
+}
+
+#dashboard-widgets .button:not(.button-primary):hover,
+#dashboard-widgets .button:not(.button-primary):active,
+#dashboard-widgets .button:not(.button-primary):focus,
+#screen-meta .button:not(.button-primary):hover,
+#screen-meta .button:not(.button-primary):active,
+#screen-meta .button:not(.button-primary):focus {
+	background: var(--wpds-color-background-interactive-brand-weak-active, #e6eaf4);
+	border-color: var(--wpds-color-stroke-interactive-brand-active, #2337c8);
+	color: var(--wpds-color-foreground-interactive-brand-active, #0b0070);
+	box-shadow: none;
+}
+
+/* WPDS focus ring: 2px outline offset by its own width */
+#dashboard-widgets .button:focus-visible,
+#screen-meta .button:focus-visible {
+	outline: var(--wpds-border-width-focus, 2px) solid var(--wpds-color-stroke-focus, #3858e9);
+	outline-offset: var(--wpds-border-width-focus, 2px);
+	box-shadow: none;
+}
+
+/* ── Screen Options / Help ───────────────────────────────────────────────
+   Tab and panel read as one floating white shape on the dark canvas: the
+   open tab pulls up 1px so its background covers the panel's top edge. */
+
+#screen-meta {
+	background: var(--wpds-color-background-surface-neutral-strong, #fff);
+	border: none;
+	border-radius: 0 0 var(--wpds-border-radius-lg, 8px) var(--wpds-border-radius-lg, 8px);
+	box-shadow: var(--dd-flat-panel-shadow);
+}
+
+#screen-meta-links .show-settings {
+	background: var(--wpds-color-background-surface-neutral-strong, #fff);
+	border: none;
+	border-radius: 0 0 var(--wpds-border-radius-lg, 8px) var(--wpds-border-radius-lg, 8px);
+	box-shadow: var(--dd-flat-panel-shadow);
+}
+
+#screen-meta-links .screen-meta-active {
+	margin-top: -1px;
+	box-shadow: none;
+}
