@@ -7,12 +7,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 From the plugin folder, one command:
 
 ```sh
-npx --yes @wp-now/wp-now start
+npx --yes @wp-playground/cli@latest start --wp=7.1.2 --php=8.0 --port=8882 --skip-browser
 ```
 
-This spins up a fresh WordPress install at `http://localhost:8881` with this plugin auto-activated (login `admin` / `password`). Edits to files under `assets/` are live — refresh the dashboard at `/wp-admin/index.php` to see them.
+This serves WordPress at `http://127.0.0.1:8882` with the plugin auto-mounted and activated (login `admin` / `password`). Edits to files under `assets/` are live, so refresh `/wp-admin/index.php` to see them.
 
-The plugin only loads on the dashboard screen (`index.php` hook). Bumping `DASHBOARD_DESIGN_VERSION` in `dashboard-design.php` busts the CSS/JS cache via the `?ver=` query string — do this whenever a refresh isn't picking up CSS/JS changes.
+Both versions are pinned on purpose:
+
+- `--php=8.0` keeps the "PHP Update Recommended" widget on the dashboard. That widget is one of the things this plugin styles (caution icon, primary button, external-link icon), so it is a useful test case. A newer PHP hides it.
+- `--wp=7.1.2` because `--wp=latest` resolves to a stale version (7.0.2 as of this writing), and a `major.minor` alias like `7.1` tracks the branch tip, which can install a release candidate. Pin the full patch version and bump it when a newer WordPress ships.
+
+Site files (database, uploads) live in `~/.wordpress-playground/sites/<hash>/`, outside the repo. Adding `--reset` deletes that site and provisions a clean one; leave it off for normal work.
+
+`@wp-now/wp-now` was the previous runner. It is deprecated and unmaintained, but it still works and resolves `latest` correctly, so it is a fallback if the Playground CLI version pinning gets in the way:
+
+```sh
+npx --yes @wp-now/wp-now start --php=8.0 --port=8882
+```
+
+The plugin only loads on the dashboard screen (`index.php` hook). Bumping `DASHBOARD_DESIGN_VERSION` in `dashboard-design.php` busts the CSS/JS cache via the `?ver=` query string. Do this whenever a refresh is not picking up CSS/JS changes.
 
 ## Architecture notes
 
@@ -28,7 +41,7 @@ If you modify this handler, keep all three side effects or other WP admin behavi
 
 **CSS specificity is non-trivial because WP admin uses ID selectors.**
 
-A lot of WP core admin CSS uses selectors like `#dashboard_quick_press .inside { padding: 0 }` and `#screen-meta-links .show-settings { border: 1px solid #c3c4c7 }`. Class-based rules in `dashboard.css` lose to those by default. When a CSS change isn't applying, check the resolved styles for an ID selector winning — the fix is to bump the specificity (e.g., scope under `#screen-meta-links` rather than just `.show-settings`).
+A lot of WP core admin CSS uses selectors like `#dashboard_quick_press .inside { padding: 0 }` and `#screen-meta-links .show-settings { border: 1px solid #c3c4c7 }`. Class-based rules in the plugin stylesheets (`base.css` is shared; `elevation.css` / `flat.css` are alternate design modes toggled by the floating switcher) lose to those by default. When a CSS change isn't applying, check the resolved styles for an ID selector winning — the fix is to bump the specificity (e.g., scope under `#screen-meta-links` rather than just `.show-settings`).
 
 **The Screen Options / Help tab styling is coordinated with the panel below.**
 

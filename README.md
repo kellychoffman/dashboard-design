@@ -4,7 +4,7 @@ A tiny WordPress plugin for updating the design of the WP admin dashboard (`/wp-
 
 ## What it does
 
-Enqueues a CSS file (and an optional JS file) only on the dashboard page. Edit `assets/css/dashboard.css` to make your changes.
+Enqueues CSS and JS only on the dashboard page, with a floating switcher to flip between three looks: **Current** (stock WP), **Elevation** (soft shadows), and **Flat** (WordPress Design System cards).
 
 ## Install
 
@@ -17,7 +17,7 @@ git clone https://github.com/kellychoffman/dashboard-design.git
 
 ## Develop
 
-- CSS: `assets/css/dashboard.css`
-- JS: `assets/js/dashboard.js`
+- CSS: `assets/css/base.css` (shared spacing + icons), `assets/css/elevation.css`, `assets/css/flat.css` (one per design mode)
+- JS: `assets/js/dashboard.js` (animations + the mode switcher)
 
 Both load only on `index.php` (the dashboard). Bump `DASHBOARD_DESIGN_VERSION` in `dashboard-design.php` to bust the cache after changes.
